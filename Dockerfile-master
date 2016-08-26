@@ -1,11 +1,19 @@
 FROM jenkinsci/jenkins
 USER root
+
+#stage the appd agent
+RUN mkdir -p /opt/appdynamics/appagent
+ADD appd-agent/AppServerAgent-4.2.5.1.zip /opt/appdynamics/appagent
+RUN unzip /opt/appdynamics/appagent/AppServerAgent-4.2.5.1.zip -d /opt/appdynamics/appagent
+RUN rm /opt/appdynamics/appagent/conf/controller-info.xml
+ADD appd-agent/conf/controller-info.xml /opt/appdynamics/appagent/conf
+
 RUN mkdir /var/log/jenkins
 RUN mkdir /var/cache/jenkins
 RUN chown -R jenkins:jenkins /var/log/jenkins
 RUN chown -R jenkins:jenkins /var/cache/jenkins
+RUN chown -R jenkins:jenkins /opt/appdynamics
 USER jenkins
 ENV JAVA_OPTS="-Xmx2048m"
 ENV JENKINS_OPTS="--logfile=/var/log/jenkins/jenkins.log"
-
 
